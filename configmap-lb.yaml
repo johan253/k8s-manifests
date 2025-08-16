@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services-configmap
+  namespace: ingress-nginx # Or your Ingress controller's namespace
+data:
+  "22": "gomegle/gomegle:23234" # format: <ns>/<service>:<port>

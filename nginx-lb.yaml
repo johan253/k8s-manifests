@@ -20,3 +20,6 @@ spec:
     - name: https
       port: 443
       targetPort: https
+    - name: ssh
+      port: 22
+      targetPort: 22

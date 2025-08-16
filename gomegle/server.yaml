@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gomegle
+  namespace: gomegle
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: gomegle
+  template:
+    metadata:
+      labels:
+        app: gomegle
+    spec:
+      containers:
+        - name: gomegle
+          image: ghcr.io/johan253/gomegle:latest
+          imagePullPolicy: Always
+          envFrom:
+            - secretRef:
+                name: gomegle-env
+          ports:
+            - containerPort: 23234
+              name: tcp
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gomegle
+  namespace: gomegle
+spec:
+  selector:
+    app: gomegle
+  ports:
+    - port: 23234
+      targetPort: 23234
+      name: tcp
+      protocol: TCP
