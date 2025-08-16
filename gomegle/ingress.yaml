@@ -4,9 +4,15 @@ metadata:
   name: gomegle-ingress
   namespace: gomegle
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-http
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - gomegle.sh
+        - www.gomegle.sh
+      secretName: gomegle-tls
   rules:
     - host: gomegle.sh
       http:
@@ -15,6 +21,16 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: gomegle
+                name: gomegle-web
                 port:
-                  number: 23234
+                  number: 3000
+    - host: www.gomegle.sh
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: gomegle-web
+                port:
+                  number: 3000
