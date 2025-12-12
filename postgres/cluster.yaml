@@ -38,6 +38,13 @@ spec:
       data:
         compression: gzip
         jobs: 2
+  managed:
+    roles:
+      - name: rmc
+        comment: RateMyCourses
+        login: true
+        passwordSecret:
+          name: postgres-credentials-rmc
 ---
 # Scheduled backups
 apiVersion: postgresql.cnpg.io/v1

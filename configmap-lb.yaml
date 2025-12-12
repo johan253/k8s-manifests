@@ -4,4 +4,5 @@ metadata:
   name: tcp-services-configmap
   namespace: ingress-nginx # Or your Ingress controller's namespace
 data:
-  "22": "gomegle/gomegle:23234" # format: <ns>/<service>:<port>
+  "22": "gomegle/gomegle:23234" # format: "<port>":"<ns>/<service>:<port>"
+  "5432": "postgres/postgres-cluster-rw:5432"
