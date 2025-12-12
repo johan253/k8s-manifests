@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: postgres
+  labels:
+    name: postgres
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres-cluster
+  namespace: postgres
+spec:
+  instances: 2
+  storage:
+    size: 50Gi
+  backup:
+    # Keep 6 months of backups
+    retentionPolicy: "6m"
+    # Backup to S3-compatible storage
+    barmanObjectStore:
+      destinationPath: "s3://postgres-backups"
+      endpointURL: "https://9da917c1c830f76ce6744c3b88dab2e0.r2.cloudflarestorage.com"
+      # S3 credentials from secret
+      s3Credentials:
+        accessKeyId:
+          name: postgres-backup-s3
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: postgres-backup-s3
+          key: ACCESS_SECRET_KEY
+      # WAL archiving
+      wal:
+        compression: gzip
+        maxParallel: 2
+      # Data backup settings
+      data:
+        compression: gzip
+        jobs: 2
+---
+# Scheduled backups
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: postgres-daily-backup
+  namespace: postgres
+  labels:
+    backup.storage/protected: "true"
+spec:
+  schedule: "0 0 0 * * 6" # Every week Saturday 12am
+  backupOwnerReference: self
+  cluster:
+    name: postgres-cluster
+  # Backup method: incremental or full
+  method: barmanObjectStore

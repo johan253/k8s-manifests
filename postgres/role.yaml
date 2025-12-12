@@ -1,0 +1,35 @@
+# postgres-backup-rbac.yaml
+---
+# Ensure the service account exists
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: postgres-cluster
+  namespace: postgres
+---
+# Role to read the backup secret
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: postgres-backup-secret-reader
+  namespace: postgres
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    resourceNames: ["postgres-backup-s3"]
+    verbs: ["get", "list", "watch"]
+---
+# Bind the role to the service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: postgres-backup-secret-access
+  namespace: postgres
+subjects:
+  - kind: ServiceAccount
+    name: postgres-cluster
+    namespace: postgres
+roleRef:
+  kind: Role
+  name: postgres-backup-secret-reader
+  apiGroup: rbac.authorization.k8s.io
