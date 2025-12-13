@@ -50,7 +50,7 @@ spec:
 apiVersion: postgresql.cnpg.io/v1
 kind: ScheduledBackup
 metadata:
-  name: postgres-daily-backup
+  name: postgres-weekly-backup
   namespace: postgres
   labels:
     backup.storage/protected: "true"
