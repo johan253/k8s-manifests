@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-discord-templates
+  namespace: monitoring
+data:
+  discord.tmpl: |
+    {{ define "discord.title" }}
+    {{ .Status | toUpper }} | {{ .CommonLabels.alertname }}
+    {{ end }}
+
+    {{ define "discord.text" }}
+    {{ range .Alerts }}
+    • **Summary:** {{ .Annotations.summary | default .Labels.alertname }}
+    • **Namespace:** {{ .Labels.namespace }}
+    • **Severity:** {{ .Labels.severity }}
+    {{ end }}
+    {{ end }}
+
+    {{ define "discord.color" }}
+    {{ if eq .Status "firing" }}danger{{ else }}good{{ end }}
+    {{ end }}

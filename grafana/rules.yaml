@@ -1,0 +1,45 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: node-cpu-high
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: node.cpu.rules
+      rules:
+        - alert: NodeCPUUsage
+          expr: |
+            1 - avg by (instance) (
+              rate(node_cpu_seconds_total{mode="idle"}[5m])
+            ) > 0.5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node CPU usage > 50% for 5 minutes"
+            description: "Node {{ $labels.instance }} has sustained CPU usage above 50%."
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: node-memory-high
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  groups:
+    - name: node.memory.rules
+      rules:
+        - alert: NodeMemoryUsage
+          expr: |
+            node_memory_Active_bytes
+            / node_memory_MemTotal_bytes > 0.5
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Node memory usage > 50% for 5 minutes"
+            description: "Node {{ $labels.instance }} is using more than 50% of available memory."
