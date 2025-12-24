@@ -53,6 +53,12 @@ alertmanager:
         - matchers:
             - alertname=~"Watchdog|InfoInhibitor"
           receiver: "null"
+        - matchers:
+            - alertname=~"KubeSchedulerDown|KubeControllerManagerDown"
+          receiver: "null"
+        - matchers:
+            - alertname="KubeDaemonSetRolloutStuck"
+          receiver: "null"
     receivers:
       - name: "null"
       - name: "discord"
