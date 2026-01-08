@@ -45,6 +45,12 @@ alertmanager:
       repeat_interval: 6h
       routes:
         - matchers:
+            - alertname=~"KubeSchedulerDown|KubeControllerManagerDown"
+          receiver: "null"
+        - matchers:
+            - alertname="KubeDaemonSetRolloutStuck"
+          receiver: "null"
+        - matchers:
             - severity="critical"
           receiver: "discord"
         - matchers:
@@ -52,12 +58,6 @@ alertmanager:
           receiver: "discord"
         - matchers:
             - alertname=~"Watchdog|InfoInhibitor"
-          receiver: "null"
-        - matchers:
-            - alertname=~"KubeSchedulerDown|KubeControllerManagerDown"
-          receiver: "null"
-        - matchers:
-            - alertname="KubeDaemonSetRolloutStuck"
           receiver: "null"
     receivers:
       - name: "null"
